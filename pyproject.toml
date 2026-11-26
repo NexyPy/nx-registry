@@ -4,7 +4,7 @@ version = "0.1.0"
 description = "Module registry for Nexy"
 readme = "README.md"
 requires-python = ">=3.12"
-dependencies = ["fastapi>=0.115", "uvicorn>=0.34"]
+dependencies = ["fastapi>=0.115", "httpx>=0.28", "pydantic>=2.14", "uvicorn>=0.34"]
 
 [dependency-groups]
 dev = [
