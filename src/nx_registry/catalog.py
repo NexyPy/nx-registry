@@ -2,12 +2,10 @@
 
 from __future__ import annotations
 
-import re
+import hashlib
 from dataclasses import dataclass
 
 from nx_registry.manifest import Manifest
-
-_CHECKSUM = re.compile(r"sha256:[0-9a-f]{64}")
 
 
 class VersionExistsError(ValueError):
@@ -24,6 +22,12 @@ class Release:
 
     manifest: Manifest
     checksum: str
+    archive: bytes
+
+
+def checksum_of(archive: bytes) -> str:
+    """Return the canonical checksum of a release archive."""
+    return f"sha256:{hashlib.sha256(archive).hexdigest()}"
 
 
 class Catalog:
@@ -32,13 +36,12 @@ class Catalog:
     def __init__(self) -> None:
         self._releases: dict[str, dict[str, Release]] = {}
 
-    def publish(self, manifest: Manifest, checksum: str) -> Release:
+    def publish(self, manifest: Manifest, archive: bytes) -> Release:
         """Store one release and return it."""
-        _check_checksum(checksum)
         versions = self._releases.setdefault(manifest.name, {})
         if manifest.version in versions:
             raise VersionExistsError(f"{manifest.name}@{manifest.version}")
-        release = Release(manifest=manifest, checksum=checksum)
+        release = Release(manifest=manifest, checksum=checksum_of(archive), archive=archive)
         versions[manifest.version] = release
         return release
 
@@ -56,8 +59,3 @@ class Catalog:
     def names(self) -> tuple[str, ...]:
         """Return every published module name in order."""
         return tuple(sorted(self._releases))
-
-
-def _check_checksum(checksum: str) -> None:
-    if not _CHECKSUM.fullmatch(checksum):
-        raise ValueError("checksum must be sha256 followed by 64 lowercase hex characters")
