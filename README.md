@@ -15,7 +15,8 @@ A module declares one of two kinds.
 - `package`: the installer adds a package with `uv add` and does not copy source files.
 
 Both kinds can declare Python and JavaScript dependencies. The registry only records them. The
-installer decides how to install them.
+installer decides how to install them. Config hooks and migrations belong to the CLI issues in the
+Nexy repository and are not part of the service yet.
 
 ## Manifest
 
