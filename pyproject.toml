@@ -24,6 +24,7 @@ packages = ["src/nx_registry"]
 
 [tool.pytest.ini_options]
 addopts = "--cov=nx_registry --cov-report=term-missing --cov-fail-under=100"
+filterwarnings = ["ignore::starlette.exceptions.StarletteDeprecationWarning"]
 testpaths = ["tests"]
 
 [tool.coverage.run]
